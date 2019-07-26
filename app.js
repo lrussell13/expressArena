@@ -63,10 +63,18 @@ app.get('/sum', (req, res) => {
     res.send(answer);
 })
 
+function reduce(shift){
+    if((shift - 26) <= 26){
+        return shift - 26
+    } else {
+      return reduce(shift - 26)
+    }
+}
+
 app.get('/cipher', (req, res) => {
     
     const text = req.query.text;
-    const shift = req.query.shift;
+    const shift = reduce(req.query.shift);
 
     if(!text){
         return res.status(400).send('Please provide some text');
@@ -76,23 +84,24 @@ app.get('/cipher', (req, res) => {
         return res.status(400).send('Please provide a shift value');
     }
 
+
     let textArr = text.toUpperCase().split('');
 
     let shiftedTextArr = textArr.map(letter => {
-        let charCode = letter.charCodeAt(0);
-    
-        if(charCode + shift > 91){
-          charCode = charCode - 26;
-        }
-    
-        let newLetter = String.fromCharCode((charCode + shift));
-        
-        return newLetter;
-      });
+    let charCode = letter.charCodeAt(0);
 
-    const newText = shiftedTextArr.join('')
+    if(charCode + shift > 90){
+      charCode -= 26;
+    }
 
-    res.send(newText);
+    
+    let newLetter = String.fromCharCode(charCode + shift);
+
+    return newLetter;
+  });
+
+  
+  res.send(shiftedTextArr.join(''))
 });
 
 app.get('/lotto', (req, res) => {
